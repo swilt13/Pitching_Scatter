@@ -23,6 +23,7 @@ def create_app(df: pd.DataFrame) -> Dash:
     numeric_cols = df.select_dtypes(include=["number"]).columns.tolist()
     all_cols = df.columns.tolist()
     teams = sorted(df["Team"].unique()) if "Team" in df.columns else []
+    players = sorted(df["Name"].unique()) if "Name" in df.columns else []
 
     app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -38,6 +39,8 @@ def create_app(df: pd.DataFrame) -> Dash:
                     html.Li("Option to add additional dimensions by manipulating size and color"),
                     html.Li("Select additional columns to display on hover"),
                     html.Li("Filter data by team or parameter values"),
+                    # make this font red to indicate new feature
+                    html.Li("**NEW FEATURE: Filter by one or multiple players**", style={"color": "red", "fontWeight": "bold"}),
                 ]
             ),
             dbc.Row(
@@ -99,10 +102,27 @@ def create_app(df: pd.DataFrame) -> Dash:
                 [
                     dbc.Col(
                         [
-                            html.Label("Filter by Team (optional)"),
+                            html.Label("Filter by Team(s) (optional)"),
                             dcc.Dropdown(
                                 id="team-filter",
                                 options=[{"label": t, "value": t} for t in teams],
+                                value=[],
+                                multi=True,
+                            ),
+                        ],
+                        md=12,
+                    ),
+                ],
+                style={"marginTop": "12px"},
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [
+                            html.Label("New: Filter by Player(s) (optional)", style={"color": "red"}),
+                            dcc.Dropdown(
+                                id="player-filter",
+                                options=[{"label": p, "value": p} for p in players],
                                 value=[],
                                 multi=True,
                             ),
@@ -188,20 +208,24 @@ def create_app(df: pd.DataFrame) -> Dash:
             Input("y-col", "value"),
             Input("color-col", "value"),
             Input("size-col", "value"),
-            Input("team-filter", "value"),
+            Input("team-filter", "value"),   
+            Input("player-filter", "value"),
             Input("hover-cols", "value"),
             Input("param-col", "value"),
             Input("param-op", "value"),
             Input("param-value", "value"),
         ],
     )
-    def update_scatter(x_col, y_col, color_col, size_col, selected_teams, hover_cols, param_col, param_op, param_value):
+    def update_scatter(x_col, y_col, color_col, size_col, selected_teams, selected_players, hover_cols, param_col, param_op, param_value):
         """Update scatter plot based on selected columns and filters."""
         if not x_col or not y_col:
             return {"data": [], "layout": {"title": "Select X and Y columns"}}
 
         # Filter by selected teams
         filtered_df = df[df["Team"].isin(selected_teams)] if selected_teams else df
+
+        # Filter by selected players
+        filtered_df = filtered_df[filtered_df["Name"].isin(selected_players)] if selected_players else filtered_df
 
         # Filter by parameter if specified
         if param_col and param_value is not None:
@@ -230,7 +254,7 @@ def create_app(df: pd.DataFrame) -> Dash:
             color=color_col if color_col in filtered_df.columns else None,
             size=size_col if size_col in filtered_df.columns else None,
             hover_data=hover_data,
-            title=f"{x_col} vs {y_col}",
+            title=f"{x_col} vs {y_col} "+ (f"| colored by {color_col} |" if color_col else "") + (f"| sized by {size_col} |" if size_col else""),
             template="plotly_white",
         )
         return fig
