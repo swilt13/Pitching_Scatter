@@ -29,15 +29,15 @@ def create_app(df: pd.DataFrame) -> Dash:
     app.layout = dbc.Container(
         # layout with title, instructions, dropdowns, and graph
         [
-            html.H2("2025 Minor League Pitchin - Interactive Scatter Plot"),
-            html.H4("This app allows you to create scatter plots from minor league pitching data."),
+            html.H2("2025 Minor League Pitchers - Interactive Scatter Plot"),
+            html.H4("This app allows you to generate scatter plots from 2025 minor league pitching data (minimum 20 IP)"),
             # create list of intrustions
             html.Ul(
                 [
-                    html.Li("Select X and Y axes from the dropdowns."),
-                    html.Li("Optionally select color and size dimensions."),
-                    html.Li("Filter data by team or parameter values."),
-                    html.Li("Select additional columns to display on hover."),
+                    html.Li("Select X and Y axes from the dropdowns"),
+                    html.Li("Option to add additional dimensions by manipulating size and color"),
+                    html.Li("Select additional columns to display on hover"),
+                    html.Li("Filter data by team or parameter values"),
                 ]
             ),
             dbc.Row(
