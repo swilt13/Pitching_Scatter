@@ -39,8 +39,7 @@ def create_app(df: pd.DataFrame) -> Dash:
                     html.Li("Option to add additional dimensions by manipulating size and color"),
                     html.Li("Select additional columns to display on hover"),
                     html.Li("Filter data by team or parameter values"),
-                    # make this font red to indicate new feature
-                    html.Li("**NEW FEATURE: Filter by one or multiple players**", style={"color": "red", "fontWeight": "bold"}),
+                    html.Li("Filter by one or multiple players"),
                 ]
             ),
             dbc.Row(
@@ -119,7 +118,7 @@ def create_app(df: pd.DataFrame) -> Dash:
                 [
                     dbc.Col(
                         [
-                            html.Label("New: Filter by Player(s) (optional)", style={"color": "red"}),
+                            html.Label("Filter by Player(s) (optional)"),
                             dcc.Dropdown(
                                 id="player-filter",
                                 options=[{"label": p, "value": p} for p in players],
