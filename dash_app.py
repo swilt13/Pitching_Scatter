@@ -37,7 +37,7 @@ def create_app(df: pd.DataFrame) -> Dash:
                 [
                     html.Li("Select X and Y axes from the dropdowns"),
                     html.Li("Option to add additional dimensions by manipulating size and color"),
-                    html.Li("Select additional columns to display on hover"),
+                    html.Li("Select additional metrics to display on hover"),
                     html.Li("Filter data by team or parameter values"),
                     html.Li("Filter by one or multiple players"),
                 ]
